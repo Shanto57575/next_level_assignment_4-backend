@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBook = exports.updateBook = exports.getBookById = exports.getAllBooks = exports.createNewBook = void 0;
+exports.deleteBook = exports.updateBook = exports.getAllBooks = exports.createNewBook = void 0;
 const book_model_1 = __importDefault(require("../models/book.model"));
 const getError_1 = __importDefault(require("../utils/getError"));
 const createNewBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,20 +44,8 @@ const createNewBook = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.createNewBook = createNewBook;
 const getAllBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { filter, sortBy, sort, limit = 10 } = req.query;
     try {
-        const query = {};
-        // filtering
-        if (filter) {
-            query.genre = filter;
-        }
-        let bookQuery = book_model_1.default.find(query);
-        if (sortBy && sort) {
-            bookQuery = bookQuery.sort({
-                [sortBy]: sort === "asc" ? 1 : -1,
-            });
-        }
-        const allBooks = yield bookQuery.limit(Number(limit));
+        const allBooks = yield book_model_1.default.find().sort({ createdAt: -1 });
         return res.status(200).json({
             success: true,
             message: "Books retrieved successfully",
@@ -82,42 +70,26 @@ const getAllBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getAllBooks = getAllBooks;
-const getBookById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { bookId } = req.params;
-    try {
-        const book = yield book_model_1.default.findById(bookId);
-        return res.status(200).json({
-            success: true,
-            message: "Book retrieved successfully",
-            data: book,
-        });
-    }
-    catch (error) {
-        console.log("Error while retrieving book =>", error);
-        if (error instanceof Error) {
-            return res.status(500).json({
-                message: (0, getError_1.default)(error),
-                success: false,
-                error,
-            });
-        }
-        else {
-            return res.status(500).json({
-                message: "Unknown error occurred",
-                success: false,
-            });
-        }
-    }
-});
-exports.getBookById = getBookById;
 const updateBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { bookId } = req.params;
     const updateData = req.body;
+    if (updateData.copies === 0) {
+        updateData.available = false;
+    }
+    else if (typeof updateData.copies === "number" && updateData.copies > 0) {
+        updateData.available = true;
+    }
     try {
         const book = yield book_model_1.default.findByIdAndUpdate(bookId, updateData, {
             new: true,
             runValidators: true,
         });
+        if (!book) {
+            return res.status(404).json({
+                success: false,
+                message: "Book not found or invalid ID",
+            });
+        }
         return res.status(200).json({
             success: true,
             message: "Book updated successfully",
@@ -144,6 +116,7 @@ const updateBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.updateBook = updateBook;
 const deleteBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { bookId } = req.params;
+    console.log("bookId", bookId);
     try {
         yield book_model_1.default.findByIdAndDelete(bookId);
         return res.status(200).json({

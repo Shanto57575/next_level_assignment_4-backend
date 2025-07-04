@@ -15,7 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const book_routes_1 = __importDefault(require("./app/routes/book.routes"));
 const borrow_routes_1 = __importDefault(require("./app/routes/borrow.routes"));
+const cors_1 = __importDefault(require("cors"));
+const corsOptions = {
+    origin: [
+        "http://localhost:5173",
+        "https://next-level-assignment-4-frontend.vercel.app",
+        "https://bright-sunflower-a94476.netlify.app",
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+};
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ message: "Library management api is running fine" });

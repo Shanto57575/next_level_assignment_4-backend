@@ -109,6 +109,9 @@ const borrowedBookSummary = (req, res) => __awaiter(void 0, void 0, void 0, func
                     totalQuantity: 1,
                 },
             },
+            {
+                $sort: { totalQuantity: -1 },
+            },
         ]);
         return res.status(200).json({
             success: true,
