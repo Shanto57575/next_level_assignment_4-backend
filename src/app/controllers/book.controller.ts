@@ -32,27 +32,8 @@ const createNewBook = async (req: Request, res: Response) => {
 };
 
 const getAllBooks = async (req: Request, res: Response) => {
-  const { filter, sortBy, sort, limit } = req.query;
-
   try {
-    const query: Record<string, any> = {};
-
-    // filtering
-    if (filter) {
-      query.genre = filter;
-    }
-
-    let bookQuery = Book.find(query);
-
-    if (sortBy && sort) {
-      bookQuery = bookQuery.sort({
-        [sortBy as string]: (sort as string) === "asc" ? 1 : -1,
-      });
-    }
-
-    const allBooks = await bookQuery
-      .limit(Number(limit))
-      .sort({ createdAt: -1 });
+    const allBooks = await Book.find().sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
@@ -77,42 +58,15 @@ const getAllBooks = async (req: Request, res: Response) => {
   }
 };
 
-const getBookById = async (req: Request, res: Response) => {
-  const { bookId } = req.params;
-
-  try {
-    const book = await Book.findById(bookId);
-
-    return res.status(200).json({
-      success: true,
-      message: "Book retrieved successfully",
-      data: book,
-    });
-  } catch (error) {
-    console.log("Error while retrieving book =>", error);
-
-    if (error instanceof Error) {
-      return res.status(500).json({
-        message: getErrorMessage(error),
-        success: false,
-        error,
-      });
-    } else {
-      return res.status(500).json({
-        message: "Unknown error occurred",
-        success: false,
-      });
-    }
-  }
-};
-
 const updateBook = async (req: Request, res: Response) => {
   const { bookId } = req.params;
   const updateData = req.body;
-  if (typeof updateData.copies === "number" && updateData.copies > 0) {
+
+  if (updateData.copies === 0) {
+    updateData.available = false;
+  } else if (typeof updateData.copies === "number" && updateData.copies > 0) {
     updateData.available = true;
   }
-  console.log("INSIDE UPDATE", bookId, updateBook);
 
   try {
     const book = await Book.findByIdAndUpdate(bookId, updateData, {
@@ -180,4 +134,4 @@ const deleteBook = async (req: Request, res: Response) => {
   }
 };
 
-export { createNewBook, getAllBooks, getBookById, updateBook, deleteBook };
+export { createNewBook, getAllBooks, updateBook, deleteBook };

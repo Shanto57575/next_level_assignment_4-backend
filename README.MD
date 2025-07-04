@@ -99,8 +99,8 @@ Returns total borrowed quantity per book (using aggregation pipeline).
 ## ⚙️ Setup & Run Locally
 
 ```bash
-git clone https://github.com/Shanto57575/next_level_assignment_3.git
-cd next_level_assignment_3
+git clone https://github.com/Shanto57575/next_level_assignment_4-backend.git
+cd next_level_assignment_4-backend
 npm install
 ```
 
@@ -117,13 +117,9 @@ MONGODB_URL="YOUR MONGODB URL"
 npm run dev
 ```
 
-## 🎥 Video Demo
-
-Watch the video explanation here: [Click to View](https://drive.google.com/file/d/1Nld93uJ1RoHlcp91N_06PRVou0AGcm9k/view?usp=sharing)
-
 ## 🌐 Live Site
 
-Live API hosted at: [https://nextlevellibrarymanagmentapi.vercel.app](https://nextlevellibrarymanagmentapi.vercel.app)
+[Backend live site](https://nextlevellibrarymanagmentapi.vercel.app)
 
 ## 👨‍💻 Author
 
